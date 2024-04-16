@@ -1,0 +1,35 @@
+---
+- name: Create Address Object in Palo Alto Firewall
+  hosts: localhost
+  gather_facts: no
+
+  vars:
+    paloalto_api_url: "https://your_firewall/api"
+    paloalto_username: "your_username"
+    paloalto_password: "your_password"
+
+  tasks:
+    - name: Create Address Object
+      uri:
+        url: "{{ paloalto_api_url }}/address"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body: |
+          {
+            "entry": {
+              "name": "New_Address_Object",
+              "type": "ip-netmask",
+              "description": "New address object created via Ansible",
+              "value": "192.168.1.0/24"
+            }
+          }
+        body_format: json
+        status_code: 200
+        validate_certs: false
+        user: "{{ paloalto_username }}"
+        password: "{{ paloalto_password }}"
+      register: response
+
+    - debug:
+        var: response.json
